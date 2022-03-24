@@ -5,15 +5,29 @@ const App = () => {
 
    const [list, setList] = useState('');
    const [date, setDate] = useState('');
+   const [journal, setJournal] =useState([]);
 
-   const handle = () => {
+   const handle = (e) => {
+      e.preventDefault();
       localStorage.setItem('list', list);
       localStorage.setItem('date', date);
+      if (list && date) {
+         const notes ={id : new Date().getTime().toString(), list, date}
+         setJournal((journal)=> {
+           return[...journal, notes]
+         })
+         setList('');
+         setDate('');
+        } else {
+          console.log('empty values')
+        }
    };
+
    const remove = () => {
       localStorage.removeItem('list');
       localStorage.removeItem('date');
    };
+
    return (
       <div className="app">
       <div className="container">
@@ -31,16 +45,23 @@ const App = () => {
             className="date"
          />
          <div>
-            <button className="submit">Submit</button>
+            <button className="submit" >Submit</button>
          </div>
          <div>
             <button onClick={remove} className="remove">Remove</button>
          </div>
          </form>
          <section className="result">
-            <div>
-            <p>{localStorage.getItem('date')} {localStorage.getItem('list')} </p>
-            </div>
+         {
+            journal.map((notes,index)=> {
+        const {id,list,date} = notes
+        return (
+        <div>
+            <p>{date} {list}</p>
+        </div>
+        );
+      })
+         }
          </section>
          </div>
       </div>
