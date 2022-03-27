@@ -23,15 +23,18 @@ const App = () => {
         }
    };
 
-   const remove = () => {
+   const remove = (id) => {
       localStorage.removeItem('list');
       localStorage.removeItem('date');
+      let newList = journal.filter((list) => list.id !== id);
+    setJournal(newList);
+
    };
 
    return (
       <div className="app">
       <div className="container">
-      <form onClick={handle} className="form">
+      <form  className="form">
          <input
           type="text"
             value={list}
@@ -45,7 +48,7 @@ const App = () => {
             className="date"
          />
          <div>
-            <button className="submit" >Submit</button>
+            <button className="submit" onClick={handle} >Submit</button>
          </div>
          <div>
             <button onClick={remove} className="remove">Remove</button>
@@ -56,7 +59,7 @@ const App = () => {
             journal.map((notes,index)=> {
         const {id,list,date} = notes
         return (
-        <div>
+        <div key={id}>
             <p>{date} {list}</p>
         </div>
         );
