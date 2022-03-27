@@ -5,6 +5,7 @@ const App = () => {
 
    const [list, setList] = useState('');
    const [date, setDate] = useState('');
+   const [invalid, setInvalid] = useState('')
    const [journal, setJournal] =useState([]);
 
    const handle = (e) => {
@@ -19,11 +20,14 @@ const App = () => {
          setList('');
          setDate('');
         } else {
-          console.log('empty values')
+         return setTimeout(() => {
+            setInvalid('Please Enter Value')
+          }, 1000);
         }
    };
 
    const remove = (id) => {
+      id.preventDefault();
       localStorage.removeItem('list');
       localStorage.removeItem('date');
       let newList = journal.filter((list) => list.id !== id);
@@ -35,6 +39,7 @@ const App = () => {
       <div className="app">
       <div className="container">
       <form  className="form">
+      <h3>{invalid}</h3>
          <input
           type="text"
             value={list}
