@@ -1,17 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import "./App.css";
+
+
+const getStorage = () => {
+   const data = JSON.parse(localStorage.getItem('notes'))
+   if (data) { return data
+   } else {
+      return localStorage.setItem('notes', JSON.stringify([]))
+   }
+}
 
 const App = () => {
 
    const [list, setList] = useState('');
    const [date, setDate] = useState('');
    const [invalid, setInvalid] = useState('')
-   const [journal, setJournal] =useState([]);
+   const [journal, setJournal] =useState(getStorage());
 
    const handle = (e) => {
       e.preventDefault();
-      localStorage.setItem('list', list);
-      localStorage.setItem('date', date);
+      // localStorage.setItem('list', list);
+      // localStorage.setItem('date', date);
       if (list && date) {
          const notes ={id : new Date().getTime().toString(), list, date}
          setJournal((journal)=> {
@@ -20,19 +29,22 @@ const App = () => {
          setList('');
          setDate('');
         } else {
-         return setTimeout(() => {
-            setInvalid('Please Enter Value')
-          }, 1000);
+         setInvalid('Please Enter value')
+         return setTimeout(() => {setInvalid('')
+            
+         }, 2000);
         }
    };
+      useEffect(()=> {
+         localStorage.setItem('notes', JSON.stringify(journal));
+      }, [journal])
 
-   const remove = (id) => {
-      id.preventDefault();
-      localStorage.removeItem('list');
-      localStorage.removeItem('date');
-      let newList = journal.filter((list) => list.id !== id);
-    setJournal(newList);
 
+   const remove = (e) => {
+      const {id} = e.target
+      const newList = journal.filter((item) => item.id !== id);
+      setJournal(newList)
+      console.log(id)
    };
 
    return (
@@ -55,17 +67,18 @@ const App = () => {
          <div>
             <button className="submit" onClick={handle} >Submit</button>
          </div>
-         <div>
-            <button onClick={remove} className="remove">Remove</button>
-         </div>
+       
          </form>
          <section className="result">
          {
-            journal.map((notes,index)=> {
+            journal.map((notes)=> {
         const {id,list,date} = notes
         return (
         <div key={id}>
             <p>{date} {list}</p>
+            <div>
+            <button onClick={remove} className="remove" id={id}>Remove</button>
+         </div>
         </div>
         );
       })
